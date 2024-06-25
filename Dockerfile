@@ -5,7 +5,7 @@ WORKDIR /usr/src/app/
 
 COPY --chown=node:node package*.json ./
 
-RUN npm install --legacy-peer-deps
+RUN npm install
 
 # Build
 FROM node:20-alpine AS build
@@ -19,7 +19,7 @@ RUN npm run build
 
 ENV NODE_ENV production
 
-RUN npm ci --only=production --legacy-peer-deps && npm cache clean --force
+RUN npm ci --only=production && npm cache clean --force
 
 USER node
 
@@ -29,5 +29,5 @@ FROM node:20-alpine AS production
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
-EXPOSE 3000
+EXPOSE 80
 CMD [ "node", "dist/main.js" ]
